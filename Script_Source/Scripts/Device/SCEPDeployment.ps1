@@ -1,35 +1,5 @@
 #requires -PSEdition Desktop
 
-<#
-.\NewDeviceSCEPCert.ps1 -Computername '10.109.99.108' -SSHCredential (Import-Clixml -Path 'C:\Credentials\DeviceRoot.cred')
-.\NewDeviceSCEPCert.ps1 -Computername '10.109.99.108' -SSHCredential (Get-Credential)
-#>
-
-# param (
-
-#   [PSCredential]
-#   $SSHCredential = (Import-Clixml -Path 'C:\Credentials\DeviceRoot.cred'),
-
-#   [String]
-#   $UMSServer = 'srvums01.bfw.local',
-
-#   [PSCredential]
-#   $UMSCredential = (Import-Clixml -Path 'C:\Credentials\srvums01rmdb.cred'),
-
-#   $Cfg.DeploymentDirName = 'I_RA_1U07',
-
-#   $($Cfg.DeviceNamePrefix) = 'TC',
-
-#   [String]
-#   $DCServer = 'srvdc02.bfw.local',
-
-#   [String[]]
-#   $Cfg.SearchBaseColl = @( 'OU=I_Computers,OU=IT,DC=bfw,DC=local',
-#     'OU=A_Computers,OU=Ausbildung,DC=bfw,DC=local',
-#     'OU=V_Computers,OU=Verwaltung,DC=bfw,DC=local' )
-
-# )
-
 $Cfg = Import-PowerShellDataFile -Path ('{0}/SCEPDeploymentConfig.psd1' -f $PSScriptRoot)
 
 foreach ($PSModule in ('Posh-SSH', 'PSIGEL', 'CommonTools'))
@@ -106,51 +76,3 @@ $DeviceQueryColl = foreach ($PingDeploymentDevice in $PingDeploymentDeviceColl)
   $null = $SSHSession | Remove-SSHSession
 }
 $DeviceQueryColl
-
-
-<#todo
-
-  $Prepare = @"
-rm /wfs/scep_cerificates/cert0/*
-cd /wfs/scep_cerificates/cert0
-scep_getca 0
-scep_mkrequest 0
-scep_enroll 0
-"@
-
-  $Null = ($Prepare -split "`n").ForEach{
-    #Invoke-SSHCommandStream -Command $_
-  }
-
-[ ] igelrmserver DNS 10.0.5.58 -> 10.0.5.57
-[x] check group.ini for scep url in profile
-
-
-[x] ums alle devices unter i_1u07 und name beginnt mit TC und ist online:
-- wenn kein AD Computerkonto + Userkonto
-- certrequest
-- Computerkonto erstellen
-- Userkonto erstellen
-- check ob wifi ok
-
-
-- igelos device is added to ums
-- get ums devices
-- get ad igelos devices - computer
-- get ad igelos devices - user (ndes) - with mapped x509 cert
-- compare
-- missing ad igelos devices
-- get online missing ad igelos devices (user)
-- script cert request
-- save cert in share on ndes (accessible) share
-- create ad igelos devices (user)
-- name mapping ad igelos devices (user) to cert - security identity mapping x509 cert
-- create ad igelos devices (device)
-
-#>
-<#
-
-
-# create ad user with name of the device
-
-#>
